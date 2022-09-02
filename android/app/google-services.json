@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "588465476811",
+    "project_id": "himpact-app-teste",
+    "storage_bucket": "himpact-app-teste.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588465476811:android:92f91bfd61f6aa3b19774e",
+        "android_client_info": {
+          "package_name": "com.example.app_himpact"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "588465476811-lmk0bl7vlc5u6jrn8cnnis2ir9rks2om.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP38xP9B90typzfktJi_c5B-D6uIyubvU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "588465476811-lmk0bl7vlc5u6jrn8cnnis2ir9rks2om.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
