@@ -85,7 +85,7 @@ class _ListarContatosState extends State<ListarContatos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Lista de Contatos"), actions: [
+        appBar: AppBar(title: Text("Lista de Contatoss"), actions: [
           IconButton(
               onPressed: () {
                 setState(() {
