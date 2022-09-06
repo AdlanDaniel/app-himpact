@@ -18,7 +18,7 @@ class _ListarContatosState extends State<ListarContatos> {
   @override
   void initState() {
     super.initState();
-    xy = recuperarContatos();
+    // xy = recuperarContatos();
   }
 
   var xy;
@@ -54,22 +54,29 @@ class _ListarContatosState extends State<ListarContatos> {
     }
   }
 
-  Future<QuerySnapshot> recuperarContatos() async {
+  // Future<QuerySnapshot> recuperarContatos() async {
+  //   FirebaseAuth auth = FirebaseAuth.instance;
+  //   FirebaseFirestore db = FirebaseFirestore.instance;
+
+  //   QuerySnapshot dadosMap = await db
+  //       .collection("Usuarios")
+  //       .doc(auth.currentUser!.uid)
+  //       .collection("Contatos")
+  //       .get();
+
+  //   return dadosMap;
+  // }
+
+  recuperarContatosStream() {
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseFirestore db = FirebaseFirestore.instance;
 
-    QuerySnapshot dadosMap = await db
+    Stream dadosMap = db
         .collection("Usuarios")
         .doc(auth.currentUser!.uid)
         .collection("Contatos")
-        .get();
-
-    // for (QueryDocumentSnapshot item in dadosMap.docs) {
-    //   var dados = item.data() as Map<String, dynamic>;
-
-    //   Contato contatos = Contato.fromMap(dados);
-    //   listContat.add(contatos);
-    // }
+        .snapshots();
+    print(dadosMap.first);
     return dadosMap;
   }
 
@@ -85,127 +92,220 @@ class _ListarContatosState extends State<ListarContatos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Lista de Contatos"), actions: [
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  xy = recuperarContatos();
-                });
-              },
-              icon: Icon(Icons.refresh))
-        ]),
-        body: FutureBuilder<QuerySnapshot>(
-          future: xy,
+      appBar: AppBar(title: Text("Lista de Contatos"), actions: [
+        IconButton(
+            onPressed: () {
+              // setState(() {
+              //   xy = recuperarContatos();
+              // });
+            },
+            icon: Icon(Icons.refresh))
+      ]),
+      // body: FutureBuilder<QuerySnapshot>(
+      //   future: xy,
+      //   builder: (context, snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return Center(
+      //         child: CircularProgressIndicator(),
+      //       );
+      //     } else if (snapshot.connectionState == ConnectionState.done) {
+      //       List<QueryDocumentSnapshot<Object?>>? queryDocuments =
+      //           snapshot.data?.docs;
+
+      //       if (!snapshot.hasData) {
+      //         return Center(
+      //           child: Text('Nenhum usuario'),
+      //         );
+      //       } else {
+      //         return ListView.builder(
+      //           itemCount: queryDocuments!.length,
+      //           itemBuilder: (context, index) {
+      //             List<Map<String, dynamic>> a = queryDocuments
+      //                 .map((e) => e.data() as Map<String, dynamic>)
+      //                 .toList();
+      //             Map<String, dynamic> b = a[index];
+
+      //             Contato contatos = Contato.fromMap(b);
+
+      //             return GestureDetector(
+      //                 onTap: () {
+      //                   Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                           builder: (context) => DetalhesContatos(
+      //                                 contatos,
+      //                               )));
+      //                 },
+      //                 child: Dismissible(
+      //                   confirmDismiss: (direction) async {
+      //                     if (direction == DismissDirection.endToStart) {
+      //                       deletarContatos(contatos);
+      //                       return true;
+      //                     } else {
+      //                       editContact(contatos);
+
+      //                       return false;
+      //                     }
+      //                   },
+      //                   secondaryBackground: Container(
+      //                     padding: EdgeInsets.all(16),
+      //                     color: Colors.red,
+      //                     child: Row(
+      //                       mainAxisAlignment: MainAxisAlignment.end,
+      //                       children: [
+      //                         Icon(
+      //                           Icons.delete,
+      //                           color: Colors.white,
+      //                         )
+      //                       ],
+      //                     ),
+      //                   ),
+      //                   background: Container(
+      //                     padding: EdgeInsets.all(16),
+      //                     color: Colors.green,
+      //                     child: Row(
+      //                       mainAxisAlignment: MainAxisAlignment.start,
+      //                       children: [
+      //                         Icon(
+      //                           Icons.edit,
+      //                           color: Colors.white,
+      //                         ),
+      //                       ],
+      //                     ),
+      //                   ),
+      //                   direction: DismissDirection.horizontal,
+      //                   key: Key(contatos.nome!),
+      //                   child: Card(
+      //                     child: ListTile(
+      //                       title: Text(contatos.nome!),
+      //                       subtitle: Text(contatos.cpf!),
+      //                       leading: Icon(
+      //                         Icons.person,
+      //                         size: 50,
+      //                       ),
+      //                       trailing: Icon(Icons.keyboard_arrow_right),
+      //                     ),
+      //                   ),
+      //                 ));
+      //           },
+      //         );
+      //       }
+      //     }
+
+      //     return Container(
+      //       child: Text("arrombado"),
+      //     );
+      //   },
+      // )
+      // ListView.builder(
+      //   itemCount: listContat.length,
+      //   itemBuilder: (context, index) {
+      //     Contato contact = listContat[index];
+      //     return ListTile(
+      //         title: Text(contact.nome!),
+      //         subtitle: Column(
+      //           crossAxisAlignment: CrossAxisAlignment.start,
+      //           children: [
+      //             Text(contact.idade.toString()),
+      //             Text(contact.cpf!),
+      //             Text(contact.id!)
+      //           ],
+      //         ));
+      //   },
+      // ),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: recuperarContatosStream(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              List<QueryDocumentSnapshot<Object?>>? queryDocuments =
-                  snapshot.data?.docs;
-
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.connectionState == ConnectionState.active) {
+              List<QueryDocumentSnapshot>? queryDocuments = snapshot.data?.docs;
               if (!snapshot.hasData) {
                 return Center(
-                  child: Text('Nenhum usuario'),
+                  child: Text("Nenhum Contato Cadastrado"),
                 );
               } else {
                 return ListView.builder(
-                  itemCount: queryDocuments!.length,
+                  itemCount: queryDocuments?.length,
                   itemBuilder: (context, index) {
-                    List<Map<String, dynamic>> a = queryDocuments
-                        .map((e) => e.data() as Map<String, dynamic>)
+                    List<Map<String, dynamic>>? a = queryDocuments
+                        ?.map((e) => e.data() as Map<String, dynamic>)
                         .toList();
-                    Map<String, dynamic> b = a[index];
 
-                    Contato contatos = Contato.fromMap(b);
+                    Map<String, dynamic> b = a![index];
+
+                    Contato contato = Contato.fromMap(b);
 
                     return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DetalhesContatos(
-                                        contatos,
-                                      )));
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    DetalhesContatos(contato)));
+                      },
+                      child: Dismissible(
+                        onDismissed: (direction) {
+                          if (direction == DismissDirection.endToStart) {
+                            deletarContatos(contato);
+                          } else {
+                            editContact(contato);
+                          }
                         },
-                        child: Dismissible(
-                          confirmDismiss: (direction) async {
-                            if (direction == DismissDirection.endToStart) {
-                              deletarContatos(contatos);
-                              return true;
-                            } else {
-                              editContact(contatos);
-
-                              return false;
-                            }
-                          },
-                          secondaryBackground: Container(
-                            padding: EdgeInsets.all(16),
-                            color: Colors.red,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Icon(
+                        key: Key(contato.nome!),
+                        secondaryBackground: Container(
+                          color: Colors.red,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Icon(
                                   Icons.delete,
                                   color: Colors.white,
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
-                          background: Container(
-                            padding: EdgeInsets.all(16),
-                            color: Colors.green,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
+                        ),
+                        background: Container(
+                          color: Colors.green,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Icon(
                                   Icons.edit,
                                   color: Colors.white,
                                 ),
-                              ],
-                            ),
+                              )
+                            ],
                           ),
-                          direction: DismissDirection.horizontal,
-                          key: Key(contatos.nome!),
-                          child: Card(
-                            child: ListTile(
-                              title: Text(contatos.nome!),
-                              subtitle: Text(contatos.cpf!),
-                              leading: Icon(
-                                Icons.person,
-                                size: 50,
-                              ),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                            ),
-                          ),
-                        ));
+                        ),
+                        child: Card(
+                          child: ListTile(
+                              title: Text(contato.nome!),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(contato.idade.toString()),
+                                  Text(contato.cpf!),
+                                  Text(contato.id!),
+                                ],
+                              )),
+                        ),
+                      ),
+                    );
                   },
                 );
               }
+            } else {
+              return Container(
+                child: Text("Erro"),
+              );
             }
-
-            return Container(
-              child: Text("arrombado"),
-            );
-          },
-        )
-        // ListView.builder(
-        //   itemCount: listContat.length,
-        //   itemBuilder: (context, index) {
-        //     Contato contact = listContat[index];
-        //     return ListTile(
-        //         title: Text(contact.nome!),
-        //         subtitle: Column(
-        //           crossAxisAlignment: CrossAxisAlignment.start,
-        //           children: [
-        //             Text(contact.idade.toString()),
-        //             Text(contact.cpf!),
-        //             Text(contact.id!)
-        //           ],
-        //         ));
-        //   },
-        // ),
-        );
+          }),
+    );
   }
 }
